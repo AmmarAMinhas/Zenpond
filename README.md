@@ -6,7 +6,7 @@ Zenpond was created during **GizzHack**, a duck-themed hackathon. It’s a peace
 
 ## 🧠 What We Used  
 - **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** Flask (Python)  
+- **Backend:** Flask, Python  
 - **AI Models:**  
   - [Grounding SAM](https://github.com/IDEA-Research/GroundingSAM) – for object segmentation  
   - [Grounding DINO (SwinT OGC Config)](https://github.com/IDEA-Research/GroundingDINO/blob/main/groundingdino/config/GroundingDINO_SwinT_OGC.py) – for object detection  
