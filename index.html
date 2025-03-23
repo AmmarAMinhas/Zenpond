@@ -9,10 +9,16 @@
   <body>
     <div id="sceneWrapper">
       <!-- 🎧 Lofi Audio + Volume Control (Keep it for now) -->
-      <audio id="lofiPlayer" autoplay loop>
-        <source src="http://stream.laut.fm/lofi" type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
+      <iframe
+        id="lofiYouTube"
+        width="0"
+        height="0"
+        src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&loop=1&playlist=jfKfPfyJRdk"
+        title="Lofi hip hop radio - beats to relax/study to"
+        frameborder="0"
+        allow="autoplay"
+        allowfullscreen
+     ></iframe>
 
       <div id="volumeControl">
         <label for="volumeSlider">🔊</label>
@@ -41,7 +47,6 @@
 
       <div id="background">
         <div id="garden"></div>
-        <div id="buildings"></div>
 
         <!-- 🐟 Pond canvas -->
         <div id="pondWrapper">
@@ -64,8 +69,8 @@
         <div class="rock rock5">
           <img src="./assets/img/rock5.svg" alt="Rock 5" />
         </div>
-        <div class="rock rock6">
-          <img src="./assets/img/rock6.svg" alt="Rock 6" />
+        <div class="rock rock2">
+          <img src="./assets/img/rock2.svg" alt="Rock 6" />
         </div>
 
         <!-- 📸 Button -->
