@@ -29,13 +29,13 @@ body {
   height: 70%;
   width: 100%;
   background: url("../assets/img/grass.jpg") repeat;
-  background-size: 80px 80px;
+  background-size: 150px 150px;
   z-index: 0;
 }
 
 #bench {
   position: absolute;
-  top: 30%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 350px;
@@ -43,9 +43,10 @@ body {
 }
 
 #bench img {
-  width: 100%;
-  height: auto;
-  filter: brightness(0.8) contrast(0.9) blur(0.5px);
+  width: auto; /* Let the SVG scale naturally */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 100%; /* Ensure it doesn't overflow */
+  filter: brightness(0.9) contrast(1.1); /* Optional: Adjust visual effects */
 }
 
 #pondWrapper {
