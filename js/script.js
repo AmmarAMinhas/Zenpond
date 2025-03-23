@@ -16,17 +16,17 @@ let duckImage = new Image();
 duckImage.src = "../assets/img/duck2.0.svg";
 
 let capybaraImage = new Image();
-capybaraImage.src = "../assets/img/capybara03.png";
+capybaraImage.src = "../assets/img/float.svg";
 
 let waterImage = new Image();
 waterImage.src = "../assets/img/water.jpg";
 
 const baseSpeed = 0.001;
-const DUCK_SIZE = 50;
-const CAPY_SIZE = 60;
+const DUCK_SIZE = 60;
+const CAPY_SIZE = 100;
 const MIN_DISTANCE = DUCK_SIZE * 1.1;
-const MAX_RADIUS_X = 230;
-const MAX_RADIUS_Y = 140;
+const MAX_RADIUS_X = 180; // Reduced from 230
+const MAX_RADIUS_Y = 100; // Reduced from 140
 
 function getPondCenter() {
   return {
@@ -52,8 +52,8 @@ function loadDucks() {
     do {
       overlap = false;
       angle = angleIncrement * i + Math.random() * 0.3;
-      radiusX = 100 + Math.random() * (MAX_RADIUS_X - 100);
-      radiusY = 80 + Math.random() * (MAX_RADIUS_Y - 80);
+      radiusX = 80 + Math.random() * (MAX_RADIUS_X - 80); // Adjusted for smaller path
+      radiusY = 60 + Math.random() * (MAX_RADIUS_Y - 60); // Adjusted for smaller path
       const newX = radiusX * Math.cos(angle);
       const newY = radiusY * Math.sin(angle);
 
@@ -132,6 +132,7 @@ function drawAnimals() {
 }
 
 function updatePositions() {
+  // Duck collisions with other ducks
   ducks.forEach((duck, i) => {
     duck.angle += duck.speed;
 
@@ -154,13 +155,75 @@ function updatePositions() {
       }
     }
 
+    // Duck collisions with capybaras
+    capybaras.forEach((capy) => {
+      const dx =
+        duck.radiusX * Math.cos(duck.angle) -
+        capy.radiusX * Math.cos(capy.angle);
+      const dy =
+        duck.radiusY * Math.sin(duck.angle) -
+        capy.radiusY * Math.sin(capy.angle);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < (DUCK_SIZE + CAPY_SIZE) / 2) {
+        const adjustment =
+          (0.003 * ((DUCK_SIZE + CAPY_SIZE) / 2 - dist)) /
+          ((DUCK_SIZE + CAPY_SIZE) / 2);
+        duck.angle += adjustment;
+        duck.speed = Math.min(duck.speed + 0.0003, 0.002);
+      }
+    });
+
     duck.radiusX = Math.min(Math.max(duck.radiusX, 60), MAX_RADIUS_X - 10);
     duck.radiusY = Math.min(Math.max(duck.radiusY, 60), MAX_RADIUS_Y - 10);
     duck.speed = Math.max(duck.speed - 0.00002, baseSpeed);
   });
 
-  capybaras.forEach((capy) => {
+  // Capybara collisions with other capybaras
+  capybaras.forEach((capy, i) => {
     capy.angle += capy.speed;
+
+    for (let j = 0; j < capybaras.length; j++) {
+      if (i !== j) {
+        const other = capybaras[j];
+        const dx =
+          capy.radiusX * Math.cos(capy.angle) -
+          other.radiusX * Math.cos(other.angle);
+        const dy =
+          capy.radiusY * Math.sin(capy.angle) -
+          other.radiusY * Math.sin(other.angle);
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < CAPY_SIZE) {
+          const adjustment = (0.003 * (CAPY_SIZE - dist)) / CAPY_SIZE;
+          capy.angle += adjustment;
+          capy.speed = Math.min(capy.speed + 0.0003, 0.002);
+        }
+      }
+    }
+
+    // Capybara collisions with ducks
+    ducks.forEach((duck) => {
+      const dx =
+        capy.radiusX * Math.cos(capy.angle) -
+        duck.radiusX * Math.cos(duck.angle);
+      const dy =
+        capy.radiusY * Math.sin(capy.angle) -
+        duck.radiusY * Math.sin(duck.angle);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < (DUCK_SIZE + CAPY_SIZE) / 2) {
+        const adjustment =
+          (0.003 * ((DUCK_SIZE + CAPY_SIZE) / 2 - dist)) /
+          ((DUCK_SIZE + CAPY_SIZE) / 2);
+        capy.angle += adjustment;
+        capy.speed = Math.min(capy.speed + 0.0003, 0.002);
+      }
+    });
+
+    capy.radiusX = Math.min(Math.max(capy.radiusX, 60), MAX_RADIUS_X - 10);
+    capy.radiusY = Math.min(Math.max(capy.radiusY, 60), MAX_RADIUS_Y - 10);
+    capy.speed = Math.max(capy.speed - 0.00002, baseSpeed);
   });
 }
 
@@ -235,122 +298,3 @@ if (audio && slider) {
     audio.volume = parseFloat(slider.value);
   });
 }
-
-
-
-
-// Get modal and file input elements
-const modal = document.getElementById("fileModal");
-const fileInput = document.getElementById("fileInput");
-const uploadButton = document.getElementById("uploadButton");
-const closeModal = document.querySelector(".close");
-
-// Open the modal when the "Take Picture" button is clicked
-document.getElementById("cameraButton").addEventListener("click", () => {
-  modal.style.display = "block";
-});
-
-// Close the modal when the close button is clicked
-closeModal.addEventListener("click", () => {
-  modal.style.display = "none";
-});
-
-// Close the modal when clicking outside of it
-window.addEventListener("click", (event) => {
-  if (event.target === modal) {
-    modal.style.display = "none";
-  }
-});
-
-// Handle file upload and processing
-uploadButton.addEventListener("click", async () => {
-  const file = fileInput.files[0];
-  if (!file) {
-    alert("Please select a JPG file.");
-    return;
-  }
-
-  // Convert the file to a base64 string
-  const reader = new FileReader();
-  reader.onload = async (event) => {
-    const base64Image = event.target.result;
-
-    // Simulate backend response for testing
-    const simulatedResponse = {
-      processedImageUrl: base64Image, // Use the same image for testing
-    };
-
-    // Display the processed image to the user
-    displayProcessedImage(simulatedResponse.processedImageUrl);
-    modal.style.display = "none"; // Close the modal
-  };
-  reader.readAsDataURL(file); // Read the file as a base64 string
-});
-
-// Function to display the processed image
-function displayProcessedImage(imageUrl) {
-  const img = document.createElement("img");
-  img.src = imageUrl;
-  img.alt = "Processed Image";
-  img.style.position = "absolute";
-  img.style.top = "20px";
-  img.style.left = "20px";
-  img.style.zIndex = "1000";
-  img.style.border = "2px solid #333";
-  img.style.borderRadius = "10px";
-  document.body.appendChild(img);
-}
-// Get image popup elements
-const imagePopup = document.getElementById("imagePopup");
-const popupImage = document.getElementById("popupImage");
-const closePopup = document.querySelector(".close-popup");
-const downloadButton = document.getElementById("downloadButton");
-
-// Function to display the uploaded image in a popup
-function displayUploadedImage(imageUrl) {
-  // Set the image source
-  popupImage.src = imageUrl;
-
-  // Show the popup
-  imagePopup.style.display = "block";
-
-  // Set up the download button
-  downloadButton.onclick = () => {
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = "processed-image.jpg"; // Default download filename
-    link.click();
-  };
-}
-
-// Close the popup when the close button is clicked
-closePopup.addEventListener("click", () => {
-  imagePopup.style.display = "none";
-});
-
-// Close the popup when clicking outside of it
-window.addEventListener("click", (event) => {
-  if (event.target === imagePopup) {
-    imagePopup.style.display = "none";
-  }
-});
-
-// Handle file upload and processing
-uploadButton.addEventListener("click", () => {
-  const file = fileInput.files[0];
-  if (!file) {
-    alert("Please select a JPG file.");
-    return;
-  }
-
-  // Convert the file to a base64 string
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const imageUrl = event.target.result;
-
-    // Display the uploaded image in the popup
-    displayUploadedImage(imageUrl);
-    modal.style.display = "none"; // Close the file selection modal
-  };
-  reader.readAsDataURL(file); // Read the file as a base64 string
-});
