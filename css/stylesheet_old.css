@@ -1,0 +1,114 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #a0d6b4;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+#background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('../assets/img/garden.png') no-repeat center center/cover;
+    z-index: 1; /* Background is behind everything */
+}
+
+#buildings {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    top: 5%;
+    background: url('../assets/img/buildings.png') no-repeat center center/contain;
+    z-index: 2; /* Buildings are above the background */
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    z-index: 3; /* Pond is above the buildings */
+}
+
+#bench {
+    position: absolute;
+    top: 5%; /* Adjust vertical position */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    width: 350px; /* Updated width */
+    z-index: 4; /* Bench is above the pond */
+}
+
+#bench img {
+    width: 100%; /* Make the image fill the container */
+    height: auto; /* Maintain aspect ratio */
+    filter: brightness(0.8) contrast(0.9) blur(0.5px); /* Darken and soften the image */
+}
+
+#cameraButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 5px;
+    z-index: 5; /* Camera button is above everything */
+}
+
+/* Rock styling */
+.rock {
+    position: absolute;
+    z-index: 3; /* Rocks are above the pond but below the bench */
+    transform: translate(-50%, -50%); /* Center the rocks */
+}
+
+.rock img {
+    width: 100%; /* Make the image fill the container */
+    height: auto; /* Maintain aspect ratio */
+    filter: brightness(0.9) contrast(1.1); /* Slightly adjust the appearance */
+}
+
+/* Individual rock positioning */
+.rock1 {
+    top: calc(50% + 180px * sin(0deg)); /* 0 degrees */
+    left: calc(50% + 180px * cos(0deg));
+    width: 220px; /* Adjust size */
+}
+
+
+.rock2 {
+    top: calc(50% + 180px * sin(60deg)); /* 60 degrees */
+    left: calc(50% + 280px * cos(60deg));
+    width: 100px; /* Adjust size */
+}
+
+.rock3 {
+    top: calc(50% + 180px * sin(120deg)); /* 120 degrees */
+    left: calc(50% + 280px * cos(120deg));
+    width: 90px; /* Adjust size */
+}
+
+.rock4 {
+    top: calc(50% + 180px * sin(180deg)); /* 180 degrees */
+    left: calc(50% + 280px * cos(180deg));
+    width: 70px; /* Adjust size */
+}
+
+.rock5 {
+    top: calc(50% + 180px * sin(240deg)); /* 240 degrees */
+    left: calc(50% + 280px * cos(240deg));
+    width: 110px; /* Adjust size */
+}
+
+.rock6 {
+    top: calc(50% + 180px * sin(300deg)); /* 300 degrees */
+    left: calc(50% + 280px * cos(300deg));
+    width: 85px; /* Adjust size */
+}

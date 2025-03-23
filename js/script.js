@@ -2,217 +2,236 @@ const canvas = document.getElementById("pondCanvas");
 const ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
 }
-
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 const ducks = [];
 const capybaras = [];
+
 let duckImage = new Image();
 duckImage.src = "../assets/img/duck2.0.svg";
+
 let capybaraImage = new Image();
 capybaraImage.src = "../assets/img/capybara03.png";
-const baseSpeed = 0.0005;
-const maxRadiusX = 280;
-const maxRadiusY = 160;
 
-// Load initial ducks with random but evenly distributed positions
+let waterImage = new Image();
+waterImage.src = "../assets/img/water.jpg";
+
+const baseSpeed = 0.001;
+const DUCK_SIZE = 50;
+const CAPY_SIZE = 60;
+const MIN_DISTANCE = DUCK_SIZE * 1.1;
+const MAX_RADIUS_X = 230;
+const MAX_RADIUS_Y = 140;
+
+function getPondCenter() {
+  return {
+    x: canvas.width / 2,
+    y: canvas.height / 2 + 40,
+  };
+}
+
+function isOverlapping(x1, y1, r1, x2, y2, r2) {
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  return distance < r1 + r2;
+}
+
 function loadDucks() {
-    const numDucks = 10;
-    const angleIncrement = (2 * Math.PI) / numDucks; // Evenly spaced angles
+  const numDucks = 10;
+  const angleIncrement = (2 * Math.PI) / numDucks;
+  let attempts = 0;
 
-    for (let i = 0; i < numDucks; i++) {
-        let angle = angleIncrement * i + (Math.random() - 0.5) * 0.2; // Slight randomness
-        let radiusX = 100 + Math.random() * 180; // Random radiusX
-        let radiusY = 80 + Math.random() * 80; // Random radiusY
-        ducks.push({ angle, speed: baseSpeed, radiusX, radiusY });
-    }
+  for (let i = 0; i < numDucks; i++) {
+    let angle, radiusX, radiusY, overlap;
+    do {
+      overlap = false;
+      angle = angleIncrement * i + Math.random() * 0.3;
+      radiusX = 100 + Math.random() * (MAX_RADIUS_X - 100);
+      radiusY = 80 + Math.random() * (MAX_RADIUS_Y - 80);
+      const newX = radiusX * Math.cos(angle);
+      const newY = radiusY * Math.sin(angle);
+
+      for (const other of ducks) {
+        const otherX = other.radiusX * Math.cos(other.angle);
+        const otherY = other.radiusY * Math.sin(other.angle);
+        if (
+          isOverlapping(
+            newX,
+            newY,
+            DUCK_SIZE / 2,
+            otherX,
+            otherY,
+            DUCK_SIZE / 2
+          )
+        ) {
+          overlap = true;
+          break;
+        }
+      }
+
+      attempts++;
+      if (attempts > 1000) break;
+    } while (overlap);
+
+    ducks.push({ angle, speed: baseSpeed, radiusX, radiusY });
+  }
 }
 
-// Draw the pond with a custom shape
 function drawPond() {
-    const pondCenterX = canvas.width / 2;
-    const pondCenterY = canvas.height * 0.7;
+  const { x: cx, y: cy } = getPondCenter();
 
-    // Create a gradient for the pond
-    const gradient = ctx.createRadialGradient(
-        pondCenterX, pondCenterY, 50,
-        pondCenterX, pondCenterY, 300
-    );
-    gradient.addColorStop(0, "#87CEEB"); // Light blue at the center
-    gradient.addColorStop(1, "#4682B4"); // Darker blue at the edges
+  ctx.beginPath();
+  ctx.moveTo(cx - 250, cy - 100);
+  ctx.bezierCurveTo(cx - 300, cy - 50, cx - 350, cy + 50, cx - 250, cy + 100);
+  ctx.bezierCurveTo(cx - 200, cy + 150, cx - 100, cy + 180, cx, cy + 150);
+  ctx.bezierCurveTo(cx + 100, cy + 180, cx + 200, cy + 150, cx + 250, cy + 100);
+  ctx.bezierCurveTo(cx + 350, cy + 50, cx + 300, cy - 50, cx + 250, cy - 100);
+  ctx.bezierCurveTo(cx + 200, cy - 150, cx, cy - 180, cx - 250, cy - 100);
+  ctx.closePath();
 
-    ctx.fillStyle = gradient;
+  if (waterImage.complete && waterImage.naturalWidth !== 0) {
+    const pattern = ctx.createPattern(waterImage, "repeat");
+    ctx.fillStyle = pattern;
+  } else {
+    ctx.fillStyle = "#87CEEB";
+  }
 
-    // Draw a custom, irregular shape for the pond
-    ctx.beginPath();
-    ctx.moveTo(pondCenterX - 250, pondCenterY - 100); // Start point
-
-    // Create irregular edges using Bezier curves
-    ctx.bezierCurveTo(
-        pondCenterX - 300, pondCenterY - 50, // Control point 1
-        pondCenterX - 350, pondCenterY + 50, // Control point 2
-        pondCenterX - 250, pondCenterY + 100 // End point
-    );
-    ctx.bezierCurveTo(
-        pondCenterX - 200, pondCenterY + 150, // Control point 1
-        pondCenterX - 100, pondCenterY + 180, // Control point 2
-        pondCenterX, pondCenterY + 150 // End point
-    );
-    ctx.bezierCurveTo(
-        pondCenterX + 100, pondCenterY + 180, // Control point 1
-        pondCenterX + 200, pondCenterY + 150, // Control point 2
-        pondCenterX + 250, pondCenterY + 100 // End point
-    );
-    ctx.bezierCurveTo(
-        pondCenterX + 350, pondCenterY + 50, // Control point 1
-        pondCenterX + 300, pondCenterY - 50, // Control point 2
-        pondCenterX + 250, pondCenterY - 100 // End point
-    );
-    ctx.bezierCurveTo(
-        pondCenterX + 200, pondCenterY - 150, // Control point 1
-        pondCenterX, pondCenterY - 180, // Control point 2
-        pondCenterX - 250, pondCenterY - 100 // End point
-    );
-
-    ctx.closePath(); // Close the path
-    ctx.fill(); // Fill the pond with the gradient
+  ctx.fill();
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#2e7d32";
+  ctx.stroke();
 }
 
-// Draw ducks and capybaras
 function drawAnimals() {
-    const pondCenterX = canvas.width / 2;
-    const pondCenterY = canvas.height * 0.7;
+  const { x: cx, y: cy } = getPondCenter();
 
-    ducks.forEach(duck => {
-        let x = pondCenterX + duck.radiusX * Math.cos(duck.angle);
-        let y = pondCenterY + duck.radiusY * Math.sin(duck.angle);
+  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
 
-        // Add shadow for depth
-        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
+  ducks.forEach((duck) => {
+    const x = cx + duck.radiusX * Math.cos(duck.angle);
+    const y = cy + duck.radiusY * Math.sin(duck.angle);
+    ctx.drawImage(duckImage, x, y, DUCK_SIZE, DUCK_SIZE);
+  });
 
-        ctx.drawImage(duckImage, x, y, 50, 50);
-    });
+  capybaras.forEach((capy) => {
+    const x = cx + capy.radiusX * Math.cos(capy.angle);
+    const y = cy + capy.radiusY * Math.sin(capy.angle);
+    ctx.drawImage(capybaraImage, x, y, CAPY_SIZE, CAPY_SIZE);
+  });
 
-    capybaras.forEach(capybara => {
-        let x = pondCenterX + capybara.radiusX * Math.cos(capybara.angle);
-        let y = pondCenterY + capybara.radiusY * Math.sin(capybara.angle);
-
-        // Add shadow for depth
-        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-
-        ctx.drawImage(capybaraImage, x, y, 60, 60);
-    });
-
-    // Reset shadow
-    ctx.shadowColor = "transparent";
+  ctx.shadowColor = "transparent";
 }
 
-// Update positions of ducks and capybaras
 function updatePositions() {
-    const pondCenterX = canvas.width / 2;
-    const pondCenterY = canvas.height * 0.7;
+  ducks.forEach((duck, i) => {
+    duck.angle += duck.speed;
 
-    // Update ducks
-    ducks.forEach((duck, i) => {
-        duck.angle += duck.speed;
+    for (let j = 0; j < ducks.length; j++) {
+      if (i !== j) {
+        const other = ducks[j];
+        const dx =
+          duck.radiusX * Math.cos(duck.angle) -
+          other.radiusX * Math.cos(other.angle);
+        const dy =
+          duck.radiusY * Math.sin(duck.angle) -
+          other.radiusY * Math.sin(other.angle);
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Avoid other ducks (original logic)
-        ducks.forEach((otherDuck, j) => {
-            if (i !== j) {
-                let dx = (duck.radiusX * Math.cos(duck.angle)) - (otherDuck.radiusX * Math.cos(otherDuck.angle));
-                let dy = (duck.radiusY * Math.sin(duck.angle)) - (otherDuck.radiusY * Math.sin(otherDuck.angle));
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < 50) {
-                    let adjustment = 0.005 * (50 - distance) / 50;
-                    duck.angle += adjustment;
-                    duck.speed = baseSpeed;
-                }
-            }
-        });
-
-        // Avoid capybaras (original logic)
-        capybaras.forEach(capy => {
-            let dx = (duck.radiusX * Math.cos(duck.angle)) - (capy.radiusX * Math.cos(capy.angle));
-            let dy = (duck.radiusY * Math.sin(duck.angle)) - (capy.radiusY * Math.sin(capy.angle));
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < 50) {
-                let adjustment = 0.005 * (50 - distance) / 50;
-                duck.angle += adjustment;
-                duck.speed = baseSpeed;
-            }
-        });
-    });
-
-    // Update capybaras
-    capybaras.forEach((capybara, i) => {
-        capybara.angle += capybara.speed;
-
-        // Avoid other capybaras (original logic)
-        capybaras.forEach((otherCapy, j) => {
-            if (i !== j) {
-                let dx = (capybara.radiusX * Math.cos(capybara.angle)) - (otherCapy.radiusX * Math.cos(otherCapy.angle));
-                let dy = (capybara.radiusY * Math.sin(capybara.angle)) - (otherCapy.radiusY * Math.sin(otherCapy.angle));
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < 50) {
-                    let adjustment = 0.005 * (50 - distance) / 50;
-                    capybara.angle += adjustment;
-                    capybara.speed = baseSpeed;
-                }
-            }
-        });
-
-        // Avoid ducks (original logic)
-        ducks.forEach(duck => {
-            let dx = (capybara.radiusX * Math.cos(capybara.angle)) - (duck.radiusX * Math.cos(duck.angle));
-            let dy = (capybara.radiusY * Math.sin(capybara.angle)) - (duck.radiusY * Math.sin(duck.angle));
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < 50) {
-                let adjustment = 0.005 * (50 - distance) / 50;
-                capybara.angle += adjustment;
-                capybara.speed = baseSpeed;
-            }
-        });
-    });
-}
-
-// Replace a random duck with a capybara
-function replaceDuckWithCapybara() {
-    if (ducks.length > 0) {
-        // Randomly select a duck to replace
-        const randomIndex = Math.floor(Math.random() * ducks.length);
-        const removedDuck = ducks.splice(randomIndex, 1)[0]; // Remove the duck at the random index
-
-        // Add a capybara in its place
-        capybaras.push({
-            angle: removedDuck.angle,
-            speed: baseSpeed,
-            radiusX: removedDuck.radiusX, // Keep the same radius
-            radiusY: removedDuck.radiusY // Keep the same radius
-        });
+        if (dist < MIN_DISTANCE) {
+          const adjustment = (0.003 * (MIN_DISTANCE - dist)) / MIN_DISTANCE;
+          duck.angle += adjustment;
+          duck.speed = Math.min(duck.speed + 0.0003, 0.002);
+        }
+      }
     }
+
+    duck.radiusX = Math.min(Math.max(duck.radiusX, 60), MAX_RADIUS_X - 10);
+    duck.radiusY = Math.min(Math.max(duck.radiusY, 60), MAX_RADIUS_Y - 10);
+    duck.speed = Math.max(duck.speed - 0.00002, baseSpeed);
+  });
+
+  capybaras.forEach((capy) => {
+    capy.angle += capy.speed;
+  });
 }
 
-// Initialize
-loadDucks();
-document.getElementById("cameraButton").addEventListener("click", replaceDuckWithCapybara);
+function replaceDuckWithCapybara() {
+  if (ducks.length === 0) return;
+  const { x: cx, y: cy } = getPondCenter();
 
-// Animation loop
+  let maxTries = 20;
+  while (maxTries-- > 0) {
+    const randomIndex = Math.floor(Math.random() * ducks.length);
+    const removedDuck = ducks[randomIndex];
+    const newX = cx + removedDuck.radiusX * Math.cos(removedDuck.angle);
+    const newY = cy + removedDuck.radiusY * Math.sin(removedDuck.angle);
+
+    let overlap = false;
+    for (const capy of capybaras) {
+      const capyX = cx + capy.radiusX * Math.cos(capy.angle);
+      const capyY = cy + capy.radiusY * Math.sin(capy.angle);
+      if (
+        isOverlapping(newX, newY, CAPY_SIZE / 2, capyX, capyY, CAPY_SIZE / 2)
+      ) {
+        overlap = true;
+        break;
+      }
+    }
+
+    if (!overlap) {
+      ducks.splice(randomIndex, 1);
+      capybaras.push({
+        angle: removedDuck.angle,
+        speed: baseSpeed,
+        radiusX: removedDuck.radiusX,
+        radiusY: removedDuck.radiusY,
+      });
+      break;
+    }
+  }
+}
+
+waterImage.onload = () => {
+  animate();
+};
+
+loadDucks();
+document
+  .getElementById("cameraButton")
+  .addEventListener("click", replaceDuckWithCapybara);
+
 function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawPond();
-    drawAnimals();
-    updatePositions();
-    requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPond();
+  drawAnimals();
+  updatePositions();
+  requestAnimationFrame(animate);
 }
 
 animate();
+
+// 🎧 Lofi volume control
+const audio = document.getElementById("lofiPlayer");
+const slider = document.getElementById("volumeSlider");
+
+if (audio && slider) {
+  audio.volume = parseFloat(slider.value);
+
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {});
+  }
+
+  slider.addEventListener("input", () => {
+    audio.volume = parseFloat(slider.value);
+  });
+}

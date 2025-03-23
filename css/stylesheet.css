@@ -1,114 +1,176 @@
 body {
-    margin: 0;
-    overflow: hidden;
-    background: #a0d6b4;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
-#background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('../assets/img/garden.png') no-repeat center center/cover;
-    z-index: 1; /* Background is behind everything */
+#sceneWrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-#buildings {
-    position: absolute;
-    width: 100%;
-    height: 30%;
-    top: 5%;
-    background: url('../assets/img/buildings.png') no-repeat center center/contain;
-    z-index: 2; /* Buildings are above the background */
+#skyLayer {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to bottom, #bd4509 0%, #fcaf16 30%, #ccd913 100%);
+  /* background: linear-gradient(to bottom, #bd4509 0%, #fcaf16 30%, #ccd913 100%); */
+  z-index: 0;
 }
 
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: block;
-    z-index: 3; /* Pond is above the buildings */
+#grassLayer {
+  position: absolute;
+  top: 30%;
+  height: 70%;
+  width: 100%;
+  background: url("../assets/img/grass.jpg") repeat;
+  background-size: 80px 80px;
+  z-index: 0;
 }
 
 #bench {
-    position: absolute;
-    top: 5%; /* Adjust vertical position */
-    left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
-    width: 350px; /* Updated width */
-    z-index: 4; /* Bench is above the pond */
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  z-index: 3;
 }
 
 #bench img {
-    width: 100%; /* Make the image fill the container */
-    height: auto; /* Maintain aspect ratio */
-    filter: brightness(0.8) contrast(0.9) blur(0.5px); /* Darken and soften the image */
+  width: 100%;
+  height: auto;
+  filter: brightness(0.8) contrast(0.9) blur(0.5px);
+}
+
+#pondWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#pondCanvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+}
+
+#background {
+  position: absolute;
+  top: 30%;
+  height: 70%;
+  width: 100%;
+  background: url("../assets/img/garden.png") no-repeat center center/cover;
+  z-index: 1;
+}
+
+#buildings {
+  position: absolute;
+  width: 100%;
+  height: 30%;
+  top: 5%;
+  background: url("../assets/img/buildings.png") no-repeat center center/contain;
+  z-index: 2;
 }
 
 #cameraButton {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #fff;
-    border: 2px solid #333;
-    border-radius: 5px;
-    z-index: 5; /* Camera button is above everything */
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 5px;
+  z-index: 5;
 }
 
-/* Rock styling */
 .rock {
-    position: absolute;
-    z-index: 3; /* Rocks are above the pond but below the bench */
-    transform: translate(-50%, -50%); /* Center the rocks */
+  position: absolute;
+  z-index: 4;
+  transform: translate(-50%, -50%);
 }
 
 .rock img {
-    width: 100%; /* Make the image fill the container */
-    height: auto; /* Maintain aspect ratio */
-    filter: brightness(0.9) contrast(1.1); /* Slightly adjust the appearance */
+  width: 100%;
+  height: auto;
+  filter: brightness(0.9) contrast(1.1);
 }
 
-/* Individual rock positioning */
 .rock1 {
-    top: calc(50% + 180px * sin(0deg)); /* 0 degrees */
-    left: calc(50% + 180px * cos(0deg));
-    width: 220px; /* Adjust size */
+  top: 65%;
+  left: 25%;
+  width: 120px;
 }
-
-
 .rock2 {
-    top: calc(50% + 180px * sin(60deg)); /* 60 degrees */
-    left: calc(50% + 280px * cos(60deg));
-    width: 100px; /* Adjust size */
+  top: 68%;
+  left: 70%;
+  width: 90px;
 }
-
 .rock3 {
-    top: calc(50% + 180px * sin(120deg)); /* 120 degrees */
-    left: calc(50% + 280px * cos(120deg));
-    width: 90px; /* Adjust size */
+  top: 83%;
+  left: 40%;
+  width: 100px;
 }
-
 .rock4 {
-    top: calc(50% + 180px * sin(180deg)); /* 180 degrees */
-    left: calc(50% + 280px * cos(180deg));
-    width: 70px; /* Adjust size */
+  top: 72%;
+  left: 15%;
+  width: 80px;
 }
-
 .rock5 {
-    top: calc(50% + 180px * sin(240deg)); /* 240 degrees */
-    left: calc(50% + 280px * cos(240deg));
-    width: 110px; /* Adjust size */
+  top: 50%;
+  left: 30%;
+  width: 100px;
+}
+.rock6 {
+  top: 50%;
+  left: 70%;
+  width: 90px;
 }
 
-.rock6 {
-    top: calc(50% + 180px * sin(300deg)); /* 300 degrees */
-    left: calc(50% + 280px * cos(300deg));
-    width: 85px; /* Adjust size */
+#volumeControl {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 6px 12px;
+  border-radius: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+#volumeControl input[type="range"] {
+  width: 100px;
+  accent-color: #2c6094;
+}
+/* Existing CSS rules... */
+
+/* 🌳 Bush Styles */
+#bush {
+  position: absolute;
+  top: 25%; /* Same as the bench */
+  left: 50%; /* Same as the bench */
+  transform: translate(-50%, -50%); /* Same as the bench */
+  z-index: 2; /* Lower than the bench's z-index: 3 */
+}
+
+#bush img {
+  width: auto; /* Let the SVG scale naturally */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 100%; /* Ensure it doesn't overflow */
+  filter: brightness(0.9) contrast(1.1); /* Optional: Adjust visual effects */
 }
