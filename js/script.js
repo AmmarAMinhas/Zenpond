@@ -235,3 +235,122 @@ if (audio && slider) {
     audio.volume = parseFloat(slider.value);
   });
 }
+
+
+
+
+// Get modal and file input elements
+const modal = document.getElementById("fileModal");
+const fileInput = document.getElementById("fileInput");
+const uploadButton = document.getElementById("uploadButton");
+const closeModal = document.querySelector(".close");
+
+// Open the modal when the "Take Picture" button is clicked
+document.getElementById("cameraButton").addEventListener("click", () => {
+  modal.style.display = "block";
+});
+
+// Close the modal when the close button is clicked
+closeModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Close the modal when clicking outside of it
+window.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+// Handle file upload and processing
+uploadButton.addEventListener("click", async () => {
+  const file = fileInput.files[0];
+  if (!file) {
+    alert("Please select a JPG file.");
+    return;
+  }
+
+  // Convert the file to a base64 string
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    const base64Image = event.target.result;
+
+    // Simulate backend response for testing
+    const simulatedResponse = {
+      processedImageUrl: base64Image, // Use the same image for testing
+    };
+
+    // Display the processed image to the user
+    displayProcessedImage(simulatedResponse.processedImageUrl);
+    modal.style.display = "none"; // Close the modal
+  };
+  reader.readAsDataURL(file); // Read the file as a base64 string
+});
+
+// Function to display the processed image
+function displayProcessedImage(imageUrl) {
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = "Processed Image";
+  img.style.position = "absolute";
+  img.style.top = "20px";
+  img.style.left = "20px";
+  img.style.zIndex = "1000";
+  img.style.border = "2px solid #333";
+  img.style.borderRadius = "10px";
+  document.body.appendChild(img);
+}
+// Get image popup elements
+const imagePopup = document.getElementById("imagePopup");
+const popupImage = document.getElementById("popupImage");
+const closePopup = document.querySelector(".close-popup");
+const downloadButton = document.getElementById("downloadButton");
+
+// Function to display the uploaded image in a popup
+function displayUploadedImage(imageUrl) {
+  // Set the image source
+  popupImage.src = imageUrl;
+
+  // Show the popup
+  imagePopup.style.display = "block";
+
+  // Set up the download button
+  downloadButton.onclick = () => {
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = "processed-image.jpg"; // Default download filename
+    link.click();
+  };
+}
+
+// Close the popup when the close button is clicked
+closePopup.addEventListener("click", () => {
+  imagePopup.style.display = "none";
+});
+
+// Close the popup when clicking outside of it
+window.addEventListener("click", (event) => {
+  if (event.target === imagePopup) {
+    imagePopup.style.display = "none";
+  }
+});
+
+// Handle file upload and processing
+uploadButton.addEventListener("click", () => {
+  const file = fileInput.files[0];
+  if (!file) {
+    alert("Please select a JPG file.");
+    return;
+  }
+
+  // Convert the file to a base64 string
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const imageUrl = event.target.result;
+
+    // Display the uploaded image in the popup
+    displayUploadedImage(imageUrl);
+    modal.style.display = "none"; // Close the file selection modal
+  };
+  reader.readAsDataURL(file); // Read the file as a base64 string
+});

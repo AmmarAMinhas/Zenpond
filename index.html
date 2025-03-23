@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="sceneWrapper">
-      <!-- 🎧 Lofi Audio + Volume Control -->
+      <!-- 🎧 Lofi Audio + Volume Control (Keep it for now) -->
       <audio id="lofiPlayer" autoplay loop>
         <source src="http://stream.laut.fm/lofi" type="audio/mpeg" />
         Your browser does not support the audio element.
@@ -33,15 +33,12 @@
       <div id="bench">
         <img src="assets/img/bench-with-couple.svg" alt="Bench with couple" />
       </div>
-<!-- 🪑 Bench -->
-<div id="bench">
-  <img src="assets/img/bench-with-couple.svg" alt="Bench with couple" />
-</div>
 
-<!-- 🌳 Bush -->
-<div id="bush">
-  <img src="assets/img/bush.svg" alt="Bush" />
-</div>
+      <!-- 🌳 Bush -->
+      <div id="bush">
+        <img src="assets/img/bush.svg" alt="Bush" />
+      </div>
+
       <div id="background">
         <div id="garden"></div>
         <div id="buildings"></div>
@@ -73,6 +70,25 @@
 
         <!-- 📸 Button -->
         <button id="cameraButton">📷 Take Picture</button>
+      </div>
+    </div>
+
+    <!-- Modal for file selection -->
+    <div id="fileModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Choose a JPG File</h2>
+        <input type="file" id="fileInput" accept=".jpg, .jpeg" />
+        <button id="uploadButton">Upload and Process</button>
+      </div>
+    </div>
+
+    <!-- Image Popup Modal -->
+    <div id="imagePopup" class="modal">
+      <div class="modal-content">
+        <span class="close-popup">&times;</span>
+        <img id="popupImage" src="" alt="Processed Image" />
+        <button id="downloadButton">Download Image</button>
       </div>
     </div>
 
