@@ -17,7 +17,7 @@ Zenpond was created during **GrizzHacks 7**, a duck-themed hackathon. It’s a p
 2. The frontend sends the image to the Flask backend using a `fetch` request.  
 3. Flask processes the image with AI:
    - GroundingDino detects the person’s bounding box
-   - Manual prompt guides SAM to segment and mask the head/face
+   - Manual point prompt guides SAM to segment and mask the head/face
    - Stable Diffusion transforms the masked area into a capybara.
 5. The resulting image is returned in base64 and rendered in the browser.
 6. A duck in the pond is replaced with a capybara.
