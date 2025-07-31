@@ -3,6 +3,7 @@
 
 ## 🌱 About  
 Zenpond was created during **GrizzHacks 7**, a duck-themed hackathon. It’s a peaceful, animated pond where users can upload a selfie or JPG headshot and watch themselves transform into a capybara using AI. When an image is uploaded, it’s processed and displayed, and one of the ducks in the pond quietly becomes a capybara—gently shifting the scene over time. Lofi music plays in the background to complete the chill vibe.
+<a href="https://devpost.com/software/zen-pond"><strong>Check it out here »</strong></a>
 
 ## 🧠 What We Used  
 - **Frontend:** HTML, CSS, JavaScript  
